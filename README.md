@@ -1,4 +1,4 @@
-#protobuf-builder
+# protobuf-builder
 
 Docker image that contains all the neccessary dependencies to create various GRPC artifacts 
 from protobuf definitions.

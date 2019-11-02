@@ -39,7 +39,11 @@ RUN go get -u -v github.com/golang/protobuf/protoc-gen-go && \
     go get -u -v github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger && \
     go get -u -v github.com/gogo/googleapis/...
 
+RUN mkdir /genrated /entrypoint /proto
 COPY generate.sh /entrypoint
 WORKDIR /entrypoint
 RUN chmod +x /entrypoint/generate.sh
-ENTRYPOINT /entrypoint/generate.sh
+RUN addgroup -g 1000 -S app && \
+    adduser -u 1000 -S app -G app
+USER app
+ENTRYPOINT ["/bin/bash", "/entrypoint/generate.sh"]

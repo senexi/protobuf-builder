@@ -32,3 +32,22 @@ for i in *.proto; do
 	--grpc_python_out=$OUT_PYTHON \
 	$i
 done
+
+if [ -z "$GIT_REPO" ]
+then
+      exit 0;
+else
+      echo "peparing git commit"
+fi
+
+eval "$(ssh-agent)"
+ssh-add <(echo "$GIT_KEY")
+
+cd /tmp
+git clone $GIT_REPO repo
+cd repo
+cp -R /generated .
+git add --all && git commit -am"added generated protobuf artifacts"
+git push
+
+

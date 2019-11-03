@@ -20,6 +20,7 @@ RUN set -ex && apk --update --no-cache add \
     python3 \
     python3-dev \
     py3-setuptools \
+    openssh-client \
     bash
 
 RUN apk add grpc-java --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing
@@ -45,4 +46,6 @@ RUN chmod +x /entrypoint/generate.sh
 RUN addgroup -g 1000 -S app && \
     adduser -u 1000 -S app -G app
 USER app
+RUN git config --global user.email "protobuf@builder.com" && git config --global user.name "Protobuf Builder"
+ENV GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
 ENTRYPOINT ["/bin/bash", "/entrypoint/generate.sh"]

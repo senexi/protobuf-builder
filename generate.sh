@@ -1,6 +1,5 @@
 #!/bin/bash
 
-OUT=/generated
 OUTPUT_BASE=/generated
 
 cd /proto
@@ -18,11 +17,18 @@ for i in *.proto; do
         -I=${GOPATH}/src/github.com/gogo/googleapis/ \
         -I=${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
         -I=$GOPATH/src/github.com/grpc-ecosystem/grpc-gateway/ \
-        $i \
         --gogoslick_out=plugins=grpc:$OUT_GO \
         --grpc-gateway_out=logtostderr=true:$OUT_GO \
         --swagger_out=logtostderr=true:$OUT_SWAGGER \
         --doc_out=markdown,${basename}.md:$OUT_DOCS \
-        --java_out=$OUT_JAVA \
-        --python_out=$OUT_PYTHON
+	--plugin=protoc-gen-grpc-java=/usr/bin/protoc-gen-grpc-java \
+	--grpc-java_out=$OUT_JAVA \
+	$i
+    python3 -m grpc_tools.protoc -I . -I=${GOPATH}/src -I=${GOPATH}/src/github.com/gogo/protobuf/protobuf \
+        -I=${GOPATH}/src/github.com/gogo/googleapis/ \
+	-I=${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
+        -I=$GOPATH/src/github.com/grpc-ecosystem/grpc-gateway/ \
+	--python_out=$OUT_PYTHON \
+	--grpc_python_out=$OUT_PYTHON \
+	$i
 done

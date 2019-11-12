@@ -10,9 +10,10 @@ for i in *.proto; do
     OUT_GO=$OUT/language/go
     OUT_JAVA=$OUT/language/java
     OUT_PYTHON=$OUT/language/pyhton
+    OUT_WEB=$OUT/language/web
     OUT_DOCS=$OUT/docs
     OUT_SWAGGER=$OUT/swagger
-    mkdir -p $OUT_GO $OUT_JAVA $OUT_PYTHON $OUT_DOCS $OUT_SWAGGER
+    mkdir -p $OUT_GO $OUT_JAVA $OUT_PYTHON $OUT_WEB $OUT_DOCS $OUT_SWAGGER
     protoc -I . -I=${GOPATH}/src -I=${GOPATH}/src/github.com/gogo/protobuf/protobuf \
         -I=${GOPATH}/src/github.com/gogo/googleapis/ \
         -I=${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
@@ -21,8 +22,11 @@ for i in *.proto; do
         --grpc-gateway_out=logtostderr=true:$OUT_GO \
         --swagger_out=logtostderr=true:$OUT_SWAGGER \
         --doc_out=markdown,${basename}.md:$OUT_DOCS \
+	--java_out=$OUT_JAVA \
 	--plugin=protoc-gen-grpc-java=/usr/bin/protoc-gen-grpc-java \
 	--grpc-java_out=$OUT_JAVA \
+	--js_out=import_style=commonjs:$OUT_WEB \
+	--grpc-web_out=import_style=commonjs,mode=grpcwebtext:$OUT_WEB \
 	$i
     python3 -m grpc_tools.protoc -I . -I=${GOPATH}/src -I=${GOPATH}/src/github.com/gogo/protobuf/protobuf \
         -I=${GOPATH}/src/github.com/gogo/googleapis/ \

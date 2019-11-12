@@ -20,8 +20,7 @@ RUN set -ex && apk --update --no-cache add \
     python3 \
     python3-dev \
     py3-setuptools \
-    openssh-client \
-    bash
+    openssh-client 
 
 RUN apk add grpc-java --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing
 
@@ -39,13 +38,15 @@ RUN go get -u -v github.com/golang/protobuf/protoc-gen-go && \
     go get -u -v github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger && \
     go get -u -v github.com/gogo/googleapis/...
 
+RUN wget -O protoc-gen-grpc-web https://github.com/grpc/grpc-web/releases/download/1.0.7/protoc-gen-grpc-web-1.0.7-linux-x86_64 && chmod +x protoc-gen-grpc-web && mv protoc-gen-grpc-web /usr/local/bin
+
 RUN mkdir /entrypoint /generated /proto
 COPY generate.sh /entrypoint
 WORKDIR /entrypoint
 RUN chmod +x /entrypoint/generate.sh 
 RUN addgroup -g 1000 -S app && \
     adduser -u 1000 -S app -G app
+RUN git config --system user.email "protobuf@builder.com" && git config --system user.name "Protobuf Builder"
 USER app
-RUN git config --global user.email "protobuf@builder.com" && git config --global user.name "Protobuf Builder"
 ENV GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
 ENTRYPOINT ["/bin/bash", "/entrypoint/generate.sh"]

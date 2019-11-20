@@ -7,11 +7,14 @@ Supported languages:
 - go
 - java
 - python
+- javascript
  
 ## usage
 
 Run the docker image and mount the input directory containing the protobufs to `/proto` and the 
 output directory to `/generated` 
+
+The input directory for the protobuf files can also be modiefied by setting the `PROTO_INPUT` environment variable.
 
 This repo contains a sample protobuf file for try out.
 

@@ -1,8 +1,9 @@
 #!/bin/bash
-
 OUTPUT_BASE=/generated
 
-cd /proto
+PROTO_INPUT=${1:-"/proto"}
+
+cd $PROTO_INPUT
 for i in *.proto; do
     echo "processing $i"
     basename="${i%.*}"

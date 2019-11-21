@@ -1,6 +1,7 @@
 #!/bin/bash
-PROTO_INPUT=${1:-"/proto"}
-OUTPUT_BASE=${2:-"/generated"}
+WORK_DIR=${1:-"/src"}
+PROTO_INPUT=${2:-"$WORK_DIR/proto"}
+OUTPUT_BASE=${3:-"$WORK_DIR/generated"}
 cd $PROTO_INPUT
 for i in *.proto; do
     echo "processing $i"
@@ -36,7 +37,7 @@ for i in *.proto; do
 	$i
 done
 
-if [ -z "$GIT_REPO" ]
+if [ -z "$GIT_KEY" ]
 then
       exit 0;
 else
@@ -46,11 +47,10 @@ fi
 eval "$(ssh-agent)"
 ssh-add <(echo "$GIT_KEY")
 
-cd /tmp
-git clone $GIT_REPO repo
-cd repo
-cp -R /generated .
-git add --all && git commit -am"added generated protobuf artifacts"
+cd $WORK_DIR
+git pull
+git add --all 
+git commit -am"added generated protobuf artifacts"
 git push
 
 

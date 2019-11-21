@@ -20,12 +20,11 @@ This repo contains a sample protobuf file for try out.
 
 ```
 git clone https://github.com/senexi/protobuf-builder.git 
-mkdir -p out
-docker run -v $(pwd)/example:/proto -v $(pwd)/out:/generated senexi/protobuf-builder:latest
+docker run -v $(pwd)/example:/src senexi/protobuf-builder:latest
 ```
 
-Optinally you can also pass is an ssh key and a git repository to which the generated files should be pushed.
+Optinally if your mounted path points to a git repo, you can also pass is an ssh key so that the changes are being pushed.
 
 ```
-docker run --env GIT_KEY="$(cat ./ssh/YOU_SECRET_KEY)" --env GIT_REPO="git@github.com:you_generated_repo.git" -v $(pwd)/example:/proto -v $(pwd)/out:/generated senexi/protobuf-builder:latest
+docker run --env GIT_KEY="$(cat ./ssh/YOU_SECRET_KEY)" -v $(pwd)/example:/src senexi/protobuf-builder:latest
 ```

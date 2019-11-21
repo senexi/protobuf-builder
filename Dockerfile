@@ -49,4 +49,4 @@ RUN addgroup -g 1000 -S app && \
 RUN git config --system user.email "protobuf@builder.com" && git config --system user.name "Protobuf Builder"
 USER app
 ENV GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
-ENTRYPOINT ["/bin/bash", "/entrypoint/generate.sh"]
+CMD ["/bin/bash", "/entrypoint/generate.sh"]

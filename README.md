@@ -7,7 +7,7 @@ Supported languages:
 - go
 - java
 - python
-- javascript
+- javascript (web)
  
 ## usage
 

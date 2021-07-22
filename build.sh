@@ -1,7 +1,7 @@
 #!/bin/bash
 
-ARCH=${1:-"amd64"}
-PB_ARCH=${2:-"linux-x86_64"}
+ACTION=${1:-"build"}
+REPO=${2:-"senexi"}
 TARGET="protobuf-builder"
 BUILDER="docker"
 
@@ -11,4 +11,9 @@ then
 fi
 
 
-$BUILDER build --build-arg ARCH=$ARCH --build-arg PB_ARCH=$ARCH2 -t $TARGET:$ARCH-latest -f ./Dockerfile .
+if [ "$ACTION" = "build" ]; then
+    $BUILDER build -t $TARGET:latest -f ./Dockerfile .
+else
+    IMAGE=$TARGET:latest
+    $BUILDER push $IMAGE $REPO/$IMAGE
+fi

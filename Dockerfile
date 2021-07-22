@@ -1,52 +1,20 @@
-FROM golang:alpine
+ARG ARCH
+FROM ${ARCH}/golang:1.16.6
 
-RUN set -ex && apk --update --no-cache add \
-    bash \
-    make \
-    cmake \
-    autoconf \
-    automake \
-    curl \
-    tar \
-    libtool \
-    g++ \
-    git \
-    openjdk11 \
-    libstdc++ \
-    ca-certificates \
-    nss \
-    protobuf \
-    wget \
-    python3 \
-    python3-dev \
-    py3-setuptools \
-    openssh-client 
+ARG PB_ARCH
+ARG PB_REL="https://github.com/protocolbuffers/protobuf/releases"
+ARG PB_VER="3.17.3"
 
-RUN apk add grpc-java --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing
-
-ENV PYTHONUNBUFFERED=1
-
-RUN python3 -m pip install --upgrade pip && python3 -m pip install grpcio && python3 -m pip install grpcio-tools
-
+RUN wget -P ${PB_REL}/download/v${PB_VER}/protoc-${PB_VER}-${PB_ARCH}.zip /tmp/protoc && \
+    chmod +x /tmp/protoc/bin/protoc && \
+    mv /tmp/protoc/bin/protoc /usr/bin
 RUN go get -u -v github.com/golang/protobuf/protoc-gen-go && \
-    go get -u -v github.com/gogo/protobuf/protoc-gen-gofast && \
-    go get -u -v github.com/gogo/protobuf/proto && \
-    go get -u -v github.com/gogo/protobuf/protoc-gen-gogoslick && \
-    go get -u -v github.com/gogo/protobuf/gogoproto && \
     go get -u -v github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc && \
-    go get -u -v github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway && \
-    go get -u -v github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger && \
-    go get -u -v github.com/gogo/googleapis/...
 
-RUN wget -O protoc-gen-grpc-web https://github.com/grpc/grpc-web/releases/download/1.0.7/protoc-gen-grpc-web-1.0.7-linux-x86_64 && chmod +x protoc-gen-grpc-web && mv protoc-gen-grpc-web /usr/local/bin
 
-RUN mkdir /entrypoint /generated /proto
-COPY generate.sh /entrypoint
-WORKDIR /entrypoint
-RUN chmod +x /entrypoint/generate.sh 
 RUN addgroup -g 1000 -S app && \
     adduser -u 1000 -S app -G app
 RUN git config --system user.email "protobuf@builder.com" && git config --system user.name "Protobuf Builder"
 USER app
 ENV GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
-CMD ["/bin/bash", "/entrypoint/generate.sh"]
+CMD ["/bin/bash", ""]

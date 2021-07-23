@@ -19,7 +19,8 @@ RUN echo ${PB_URL} && wget ${PB_URL} -P ${PB_DEST} && \
 
 RUN go get -u -v github.com/golang/protobuf/protoc-gen-go && \
     go get -u -v google.golang.org/grpc/cmd/protoc-gen-go-grpc && \
-    go get -u -v github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc
+    go get -u -v github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc && \
+    mv /go/bin/* /usr/local/bin
 
 RUN adduser dev --disabled-password --gecos ""                          && \
     echo "ALL            ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers     && \
@@ -27,7 +28,14 @@ RUN adduser dev --disabled-password --gecos ""                          && \
     chgrp -R 0 /home/dev /go && \
     chmod -R g+rwX /home/dev /go
 
-RUN git config --system user.email "protobuf@builder.com" && git config --system user.name "Protobuf Builder"
+RUN git config --system user.email "protobuf@builder.com" && \
+    git config --system user.name "Protobuf Builder" 
+ 
 USER dev
+ENV GOROOT /usr/local/go
+ENV GOPATH /go
+ENV GOBIN /go/bin
+ENV PATH="$GOBIN:$PATH"
+ENV PATH="$GOROOT/bin:$PATH"
 ENV GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
-CMD ["/bin/bash", ""]
+CMD ["/bin/bash"]

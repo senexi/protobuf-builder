@@ -20,6 +20,7 @@ RUN echo ${PB_URL} && wget ${PB_URL} -P ${PB_DEST} && \
 RUN go get -u -v github.com/golang/protobuf/protoc-gen-go && \
     go get -u -v google.golang.org/grpc/cmd/protoc-gen-go-grpc && \
     go get -u -v github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc && \
+    go get -u -v github.com/google/wire/cmd/wire && \
     mv /go/bin/* /usr/local/bin
 
 RUN adduser dev --disabled-password --gecos ""                          && \
